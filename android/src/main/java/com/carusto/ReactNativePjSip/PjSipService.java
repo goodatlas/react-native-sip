@@ -183,18 +183,18 @@ public class PjSipService extends Service {
             }
             else // Modified by robert.choi 
             {
-              epConfig.getMedConfig().setQuality(5);   // default: 5
+              epConfig.getMedConfig().setQuality(4);   // default: 5
               epConfig.getMedConfig().setEcOptions(1); // default: 1
-              epConfig.getMedConfig().setEcTailLen(300); // default: 200
+              epConfig.getMedConfig().setEcTailLen(200); // default: 200
               epConfig.getMedConfig().setThreadCnt(2); // Default 2
               epConfig.getMedConfig().setAudioFramePtime(20); //Default 20
               epConfig.getMedConfig().setPtime(0); //Default 0, use codec ptime
               epConfig.getMedConfig().setSndPlayLatency(20); // Default 5
-              epConfig.getMedConfig().setSndRecLatency(10); // Default 5
-              epConfig.getMedConfig().setJbInit(150); // Default 150
-              epConfig.getMedConfig().setJbMinPre(60); // Default 60
-              epConfig.getMedConfig().setJbMaxPre(240); // Default 240
-              epConfig.getMedConfig().setJbMax(300); // Default 300
+              epConfig.getMedConfig().setSndRecLatency(20); // Default 5
+              epConfig.getMedConfig().setJbInit(250); // Default 150
+              epConfig.getMedConfig().setJbMinPre(160); // Default 60
+              epConfig.getMedConfig().setJbMaxPre(440); // Default 240
+              epConfig.getMedConfig().setJbMax(400); // Default 300
               epConfig.getMedConfig().setNoVad(false); // Default 0(Enable vad)
             } // End Modification by robert.choi 
 
