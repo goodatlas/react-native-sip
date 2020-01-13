@@ -173,10 +173,32 @@ public class PjSipService extends Service {
 
             epConfig.getMedConfig().setHasIoqueue(true);
             epConfig.getMedConfig().setClockRate(8000);
-            epConfig.getMedConfig().setQuality(4);
-            epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(200);
-            epConfig.getMedConfig().setThreadCnt(2);
+
+            if(false) // Org Source Code
+            {
+              epConfig.getMedConfig().setQuality(4);
+              epConfig.getMedConfig().setEcOptions(1);
+              epConfig.getMedConfig().setEcTailLen(200);
+              epConfig.getMedConfig().setThreadCnt(2);
+            }
+            else // Modified by robert.choi 
+            {
+              epConfig.getMedConfig().setQuality(5);   // default: 5
+              epConfig.getMedConfig().setEcOptions(1); // default: 1
+              epConfig.getMedConfig().setEcTailLen(300); // default: 200
+              epConfig.getMedConfig().setThreadCnt(2); // Default 2
+              epConfig.getMedConfig().setAudioFramePtime(20); //Default 20
+              epConfig.getMedConfig().setPtime(0); //Default 0, use codec ptime
+              epConfig.getMedConfig().setSndPlayLatency(20); // Default 5
+              epConfig.getMedConfig().setSndRecLatency(10); // Default 5
+              epConfig.getMedConfig().setJbInit(150); // Default 150
+              epConfig.getMedConfig().setJbMinPre(60); // Default 60
+              epConfig.getMedConfig().setJbMaxPre(240); // Default 240
+              epConfig.getMedConfig().setJbMax(300); // Default 300
+              epConfig.getMedConfig().setNoVad(false); // Default 0(Enable vad)
+            } // End Modification by robert.choi 
+
+
             mEndpoint.libInit(epConfig);
 
             mTrash.add(epConfig);
@@ -1011,7 +1033,14 @@ public class PjSipService extends Service {
                     mWifiLock.acquire();
 
                     if (callState == pjsip_inv_state.PJSIP_INV_STATE_EARLY || callState == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                        mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                        if(false)// Org code 
+                        { 
+                          mAudioManager.setMode(AudioManager.MODE_IN_CALL); 
+                        } 
+                        else // Modified by robert.choi 
+                        {
+                          mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                        }
                     }
                 }
             });
