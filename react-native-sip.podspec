@@ -12,12 +12,13 @@ Pod::Spec.new do |s|
   s.homepage     = package['homepage']
   s.platform     = :ios, "9.0"
 
-  s.source       = { :git => "https://github.com/florindumitru/react-native-sip.git", :tag => "v#{s.version}" }
-  s.source_files = "ios/**/*.{h,m}"
-  s.vendored_frameworks = 'ios/VialerPJSIP.framework'
+  s.source       = { :git => "https://github.com/goodatlas/react-native-sip.git", :tag => "v#{s.version}" }
+  s.source_files  = "ios/RTCPjSip/**/*.{h,m}"
+
+  s.vendored_frameworks='ios/VialerPJSIP.framework'
   s.dependency 'React'
   s.xcconfig = {
-        'GCC_PREPROCESSOR_DEFINITIONS' => 'PJ_AUTOCONF=1',
-	}
-  
+    'GCC_PREPROCESSOR_DEFINITIONS' => 'PJ_AUTOCONF=1',
+  }
+
 end
