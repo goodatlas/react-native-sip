@@ -284,6 +284,8 @@ public class PjSipService extends Service {
         try {
             if (mEndpoint != null) {
                 mEndpoint.libDestroy();
+                // https://github.com/datso/react-native-pjsip/issues/150
+                mEndpoint.delete();
             }
         } catch (Exception e) {
             Log.w(TAG, "Failed to destroy PjSip library", e);
