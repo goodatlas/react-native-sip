@@ -277,13 +277,15 @@ public class PjSipService extends Service {
 
     @Override
     public void onDestroy() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (mWorkerThread != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             mWorkerThread.quitSafely();
         }
 
         try {
             if (mEndpoint != null) {
                 mEndpoint.libDestroy();
+                // https://github.com/datso/react-native-pjsip/issues/150
+                mEndpoint.delete();
             }
         } catch (Exception e) {
             Log.w(TAG, "Failed to destroy PjSip library", e);
@@ -468,6 +470,16 @@ public class PjSipService extends Service {
     }
 
     private void handleAccountCreate(Intent intent) {
+        try {
+            while (mAccounts.size() > 0) {
+                PjSipAccount currAccount = mAccounts.get(0);
+                Log.d(TAG, "removing account" + currAccount.toJson());
+                currAccount.delete();
+                mAccounts.remove(0);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "failed to remove account");
+        }
         try {
             AccountConfigurationDTO accountConfiguration = AccountConfigurationDTO.fromIntent(intent);
             PjSipAccount account = doAccountCreate(accountConfiguration);
