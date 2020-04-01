@@ -29,7 +29,7 @@ if [ "$DOWNLOAD" = true ]; then
     #tar -xvf "${DEST}"
     #rm -f "${DEST}"
 
-    #echo "${VERSION}" > ${LOCK}
+    echo "${VERSION}" > ${LOCK}
     #cd react-native-pjsip-builder-2.8.0
     cd pjsip-builder
     ./release.sh
