@@ -34,5 +34,5 @@ if [ "$DOWNLOAD" = true ]; then
     cd react-native-pjsip-builder-2.8.1
     ./release.sh
     cp -rf dist/ios/VialerPJSIP.framework ../ios/
-    cp -rf dist/android/src/* ../android/src
+    # cp -rf dist/android/src/* ../android/src
 fi
