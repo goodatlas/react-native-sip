@@ -82,11 +82,17 @@
         // Init media config
         pjsua_media_config mediaConfig;
         pjsua_media_config_default(&mediaConfig);
-        mediaConfig.clock_rate = PJSUA_DEFAULT_CLOCK_RATE;
+        //mediaConfig.clock_rate = PJSUA_DEFAULT_CLOCK_RATE;
         mediaConfig.snd_clock_rate = 0;
         
         // VAD deactivated
         mediaConfig.no_vad = 1;
+
+        // lucas
+        mediaConfig.ec_options  = 0;  // no SW AEC 
+        mediaConfig.ec_tail_len = 0;  // disable AEC computation
+        mediaConfig.thread_cnt  = 2;
+        mediaConfig.clock_rate  = 8000; // set to 8kHz
         
         // Init the pjsua
         status = pjsua_init(&cfg, &log_cfg, &mediaConfig);
@@ -255,7 +261,12 @@
     pjsua_call_id callId;
     pj_str_t callDest = pj_str((char *) [destination UTF8String]);
     
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    // lucas
+    //   allow BT connection, set mode as VoiceChat (deactivate built-in AEC)
+    AVAudioSession* audioSession = [AVAudioSession sharedInstance];
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
+    [audioSession setMode:AVAudioSessionModeVoiceChat error:nil];
+    //[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     
     pj_status_t status = pjsua_call_make_call(account.id, &callDest, &callSettings, NULL, &msgData, &callId);
     
@@ -293,7 +304,14 @@
     self.isSpeaker = true;
     
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    [audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    // lucasjo
+    //   activate the built-in AEC
+    AVAudioSessionCategoryOptions options = audioSession.categoryOptions;
+    options |= AVAudioSessionCategoryOptionDefaultToSpeaker;
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+                  withOptions:options
+                        error:nil];
+    //[audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
     
     for (NSString *key in self.calls) {
         PjSipCall *call = self.calls[key];
@@ -305,7 +323,14 @@
     self.isSpeaker = false;
     
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    [audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
+    // lucasjo
+    //   de-activate the built-in AEC
+    AVAudioSessionCategoryOptions options = audioSession.categoryOptions;
+    options &= ~AVAudioSessionCategoryOptionDefaultToSpeaker;
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+                  withOptions:options
+                        error:nil];
+    //[audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
     
     for (NSString *key in self.calls) {
         PjSipCall *call = self.calls[key];
