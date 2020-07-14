@@ -85,17 +85,25 @@
         //mediaConfig.clock_rate = PJSUA_DEFAULT_CLOCK_RATE;
         mediaConfig.snd_clock_rate = 0;
         
+        // kory
         // VAD deactivated
         mediaConfig.no_vad = 1;
 
+        // kory
+        const int PJMEDIA_ECHO_DEFAULT = 0; // use any available backend echo canceller algorithm
+        const int PJMEDIA_ECHO_SPEEX = 1;
+        const int PJMEDIA_ECHO_SIMPLE = 2; // echo suppressor
+        const int PJMEDIA_ECHO_WEBRTC = 3;
+        const int PJMEDIA_ECHO_USE_SW_ECHO = 64;
+
         // lucas
         //   for now, we don't know how to use built-in AEC, so set up AEC from PjSip
-        const int PJMEDIA_ECHO_SPEEX = 2;
         const int PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR = 128;
         const int PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE = 0x300;
-        
-        mediaConfig.ec_options  = PJMEDIA_ECHO_SPEEX | PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR | PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE;
-        mediaConfig.ec_tail_len = 100;  // enable PjSip AEC computation
+
+        // kory        
+        mediaConfig.ec_options  = PJMEDIA_ECHO_DEFAULT
+        mediaConfig.ec_tail_len = 25; // AEC computation : ptime + PJMEDIA_WSOLA_DELAY_MSEC
         mediaConfig.thread_cnt  = 1;
         mediaConfig.clock_rate  = 8000; // set to 8kHz
                 
