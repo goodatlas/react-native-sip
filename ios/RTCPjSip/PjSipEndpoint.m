@@ -89,11 +89,16 @@
         mediaConfig.no_vad = 1;
 
         // lucas
-        mediaConfig.ec_options  = 0;  // no SW AEC 
-        mediaConfig.ec_tail_len = 0;  // disable AEC computation
-        mediaConfig.thread_cnt  = 2;
-        mediaConfig.clock_rate  = 8000; // set to 8kHz
+        //   for now, we don't know how to use built-in AEC, so set up AEC from PjSip
+        const int PJMEDIA_ECHO_SPEEX = 2;
+        const int PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR = 128;
+        const int PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE = 0x300;
         
+        mediaConfig.ec_options  = PJMEDIA_ECHO_SPEEX | PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR | PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE;
+        mediaConfig.ec_tail_len = 100;  // enable PjSip AEC computation
+        mediaConfig.thread_cnt  = 1;
+        mediaConfig.clock_rate  = 8000; // set to 8kHz
+                
         // Init the pjsua
         status = pjsua_init(&cfg, &log_cfg, &mediaConfig);
         if (status != PJ_SUCCESS) {
@@ -262,7 +267,7 @@
     pj_str_t callDest = pj_str((char *) [destination UTF8String]);
     
     // lucas
-    //   allow BT connection, set mode as VoiceChat (deactivate built-in AEC)
+    //   allow BT connection, set mode as VoiceChat
     AVAudioSession* audioSession = [AVAudioSession sharedInstance];
     [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
     [audioSession setMode:AVAudioSessionModeVoiceChat error:nil];
@@ -305,7 +310,6 @@
     
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     // lucasjo
-    //   activate the built-in AEC
     AVAudioSessionCategoryOptions options = audioSession.categoryOptions;
     options |= AVAudioSessionCategoryOptionDefaultToSpeaker;
     [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -323,8 +327,7 @@
     self.isSpeaker = false;
     
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    // lucasjo
-    //   de-activate the built-in AEC
+    //lucas
     AVAudioSessionCategoryOptions options = audioSession.categoryOptions;
     options &= ~AVAudioSessionCategoryOptionDefaultToSpeaker;
     [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
